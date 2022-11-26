@@ -1,5 +1,4 @@
-﻿using EvenSo.Logic.Attributes;
-using EvenSo.Logic.Model;
+﻿using EvenSo.Logic.Model;
 using Microsoft.Azure.Cosmos;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace EvenSo.Client.Test.Model
 {
-    [Item(id: "IdHolder/MoreIdHolder/Id", partitionKey: "IdHolder/PartitionKey")]
     public abstract class WikidataEntity
     {
         public IdHolder IdHolder { get; set; } = new();
@@ -17,7 +15,6 @@ namespace EvenSo.Client.Test.Model
         public ICollection<Label> Labels { get; set; } = new List<Label>();
     }
 
-    [Item(id: "Id", partitionKey: "Value")]
     public class IdHolder
     {
         public string Id { get; set; } = "id";

@@ -1,5 +1,4 @@
-﻿using EvenSo.Logic.Attributes;
-using EvenSo.Logic.Model;
+﻿using EvenSo.Logic.Model;
 using Microsoft.Azure.Cosmos;
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,7 @@ namespace EvenSo.Client.Test.Model
 {
     public class Item : Subject
     {
+        public string PK { get; set; } = "PK";
         public List<Label> Labels { get; set; } = new();
     }
 }

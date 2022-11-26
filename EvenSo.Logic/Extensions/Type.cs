@@ -1,183 +1,126 @@
 ﻿#region Usings
 
-using EvenSo.Logic.Attributes;
+using EvenSo.Keys;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
+using System.Xml.Linq;
 
 #endregion
 
 namespace EvenSo.Logic.Extensions
 {
-    public static class MetadataCach
+    public static class TypeCach
     {
-        private static readonly Dictionary<Type, Metadata> _cachedMetadata = new();
+        private static readonly Dictionary<Type, TypeData> _cache = new();
 
-        public static bool IsItem(this object item) =>
-            item.GetCachedMetadata().IsItem;
+        public static bool HasKeys(this Type type, params KeyType[] keyTypes) =>
+            type.GetCache().HasKeys(keyTypes);
 
-        public static bool IsListItem(this object item) =>
-            item.GetCachedMetadata().IsListItem;
+        public static bool HasKeys(this object item, params KeyType[] keyTypes) =>
+            item.GetType().GetCache().HasKeys(keyTypes);
 
-        public static bool IsReference(this object item) =>
-            item.GetCachedMetadata().IsReference;
+        public static PropertyData? GetKey(this Type type, KeyType keyType) =>
+            type.GetCache().GetKey(keyType);
 
-        public static bool IsCollection(this Type type) =>
-            type.IsGenericType && new[] { nameof(ICollection), nameof(IEnumerable) }
-                .Any(@interface => type.GetInterface(@interface) is not null);
+        public static PropertyData? GetKey(this object item, KeyType keyType) =>
+            item.GetType().GetCache().GetKey(keyType);
 
-        public static bool IsCollection(this object item) => item.GetType().IsCollection();
+        public static object? GetKeyValue(this object item, KeyType keyType) =>
+            item.GetKey(keyType)?.GetValue(item);
 
-        public static Type? GetCollectionType(this Type type) =>
+        public static IEnumerable<PropertyData> GetKeys(this Type type) =>
+            type.GetCache().Keys;
+
+        public static IEnumerable<PropertyData> GetKeys(this object item) =>
+            item.GetType().GetCache().Keys;
+
+        public static bool IsEnumerable(this Type type) =>
+            type.GetInterface(nameof(IEnumerable)) is not null;
+
+        public static Type? GetGenericType(this Type type) =>
             type.GetGenericArguments().FirstOrDefault();
 
-        public static Type? GetCollectionType(this object item) => item.GetType().GetCollectionType();
+        public static Type? GetGenericType(this object item) => item.GetType().GetGenericType();
 
-        public static object? GetId(this object item) =>
-            item.GetCachedMetadata().GetId(item);
+        public static IEnumerable<PropertyData> GetProperties(this object item) =>
+            item.GetCache().Properties;
 
-        public static object? GetPartitionKey(this object item) =>
-            item.GetCachedMetadata().GetPartitionKey(item);
-
-        public static PropertyMetadata[] GetProperties(this object item) =>
-            item.GetCachedMetadata().Properties;
-
-        public static object? GetValueOf(this object item, PropertyMetadata property) =>
+        public static object? GetValueOf(this object item, PropertyData property) =>
             property.GetValue(item);
 
         public static bool IsSystem(this Type type) =>
             type.Namespace?.StartsWith("System") ?? false;
+
         public static bool IsSystem(this object item) => item.GetType().IsSystem();
 
         public static bool IsNotSystem(this Type type) => !type.IsSystem();
 
         public static bool IsNotSystem(this object item) => !item.GetType().IsSystem();
 
-        private static Metadata GetCachedMetadata(this Type type) =>
-            _cachedMetadata.TryGetValue(type, out var props) ? props : CachMetaData(type);
+        private static TypeData GetCache(this Type type) =>
+            _cache.TryGetValue(type, out var props) ? props : Cach(type);
  
-        private static Metadata GetCachedMetadata(this object item) => item.GetType().GetCachedMetadata();
+        private static TypeData GetCache(this object item) => item.GetType().GetCache();
 
-        private static Metadata CachMetaData(Type type)
+        private static TypeData Cach(Type type)
         {
-            var metadata = new Metadata(type);
-            _cachedMetadata.Add(type, metadata);
-            return metadata;
+            var data = new TypeData(type);
+            _cache.Add(type, data);
+            return data;
         }
     }
 
-    public class Metadata
+    public sealed class TypeData
     {
-        private readonly bool _isItem = false;
-        private readonly bool _isListItem = false;
-        private readonly bool _isReference = false;
-        private readonly object[] _idGetters = Array.Empty<object>();
-        private readonly object[] _partitionKeyGetters = Array.Empty<object>();
-        private readonly PropertyMetadata[] _properties;
-
-
-
-        internal Metadata(Type type)
+        internal TypeData(Type type)
         {
-            if (type.GetCustomAttribute<ItemAttribute>(inherit: true) is { } itemAttribute)
+            Properties = type
+                .GetProperties()
+                .Select(propertyInfo => new PropertyData(propertyInfo));
+
+            try
             {
-                _idGetters = GetGetters(type, itemAttribute.Id);
-                _partitionKeyGetters = GetGetters(type, itemAttribute.PartitonKey);
-
-                _isItem = _idGetters.Any() && _partitionKeyGetters.Any();
-            }
-
-            if (type.GetCustomAttribute<ListItemAttribute>(inherit: true) is { } listItemAttribute)
+                Keys = Properties.GetKeys(checkMultiple: true);
+            } 
+            catch (Exceptions.KeyException keyException)
             {
-                _idGetters = GetGetters(type, listItemAttribute.Id);
-                _isListItem = _idGetters.Any();
+                throw new Exceptions.TypeException(type.Name + 
+                    (keyException?.KeyTypes?.Any() ?? false ? 
+                    $" has multiple {string.Join(" and ", keyException.KeyTypes)}" 
+                    : string.Empty), type);
             }
-
-            if(type.GetCustomAttribute<ReferenceAttribute>(inherit: true) is { } referenceAttribute)
-            {
-                _idGetters = GetGetters(type, referenceAttribute.Id);
-                _partitionKeyGetters = GetGetters(type, referenceAttribute.PartitonKey);
-                _isReference = _idGetters.Any() && _partitionKeyGetters.Any();
-            }
-
-            _properties = type.GetProperties()
-                .Select(propertyInfo => new PropertyMetadata(propertyInfo))
-                .ToArray();
         }
 
-        internal bool IsItem => _isItem;
-        internal bool IsListItem => _isListItem;
-        internal bool IsReference => _isReference;
+        internal IEnumerable<PropertyData> Properties { get; }
+        internal IEnumerable<PropertyData> Keys { get; }
 
-        internal object? GetId(object obj) => Get(obj, _idGetters);
-
-        internal object? GetPartitionKey(object obj) => Get(obj, _partitionKeyGetters);
-
-        internal PropertyMetadata[] Properties => _properties;
-
-        private static object[] GetGetters(Type type, string idPath)
-        {
-            var propertyType = type;
-            var getters = new List<object>();
-            foreach (var pathPart in idPath.Split('/'))
-            {
-                if (propertyType.GetProperty(pathPart) is PropertyInfo property)
-                {
-                    getters.Add(Delegate.CreateDelegate(
-                        typeof(Func<,>).MakeGenericType(propertyType, property.PropertyType),
-                        property!.GetGetMethod()!
-                    ));
-                    propertyType = property.PropertyType;
-                }
-                else return Array.Empty<object>();
-            }
-
-            return getters.ToArray();
-        }
-
-        private static object? Get(object obj, dynamic[] getters)
-        {
-            if (getters.Any())
-            {
-                foreach (var getter in getters)
-                {
-                    obj = getter((dynamic)obj);
-                }
-                return obj;
-            }
-            else return null;
-        }
+        internal bool HasKeys(params KeyType[] keyTypes) =>
+            keyTypes.All(keyType => Keys.Select(key => key.KeyType).Contains(keyType));
+        
+        internal PropertyData? GetKey(KeyType keyType) => Keys.SingleOrDefault(key => key.KeyType == keyType);
     }
 
     [DebuggerDisplay("{Name}")]
-    public class PropertyMetadata
+    public sealed class PropertyData
     {
-        private readonly Type _type;
-        private readonly string _name;
-        private readonly object _getter;
-        private readonly bool _isReferenced;
-        private readonly bool _isCollection;
-        private readonly Type? _collectionType;
+        private readonly object _getMethod;
 
-        internal PropertyMetadata(PropertyInfo propertyInfo)
+        internal PropertyData(PropertyInfo propertyInfo)
         {
-            _type = propertyInfo.PropertyType;
-            _name = propertyInfo.Name;
-            _getter = Delegate.CreateDelegate(typeof(Func<,>).MakeGenericType(propertyInfo.DeclaringType!, propertyInfo.PropertyType), propertyInfo.GetGetMethod()!);
-            _isReferenced = propertyInfo.IsDefined(typeof(ReferencedAttribute));
-            _isCollection = propertyInfo.PropertyType.IsGenericType && new[] { nameof(ICollection), nameof(IEnumerable) }
-                .Any(inerface => propertyInfo.PropertyType.GetInterface(inerface) is not null);
-            if(_isCollection)
-            {
-                _collectionType = _type.GetGenericArguments()[0];
-            }
+            Type = propertyInfo.PropertyType;
+            Name = propertyInfo.Name;
+            KeyType = propertyInfo.GetKeyType();
+
+            _getMethod = Delegate.CreateDelegate(typeof(Func<,>).MakeGenericType(propertyInfo.DeclaringType!, Type), propertyInfo.GetGetMethod()!);
         }
 
-        public bool IsReferenced => _isReferenced;
-        public Type Type => _type;
-        public string Name => _name;
-        public bool IsCollection => _isCollection;
-        public Type? CollectionType => _collectionType;
-        public object? GetValue(object obj) => ((dynamic)_getter)((dynamic)obj);
+        public KeyType KeyType { get; }
+        public bool IsKey => KeyTypes.IsKey(KeyType);
+        public Type Type { get; }
+        public string Name { get; }
+        public object? GetValue(object item) => ((dynamic)_getMethod)((dynamic)item);
     }
 }

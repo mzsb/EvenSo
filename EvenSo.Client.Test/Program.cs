@@ -1,67 +1,51 @@
 ﻿
+using BenchmarkDotNet.Running;
+using EvenSo.Client.Test;
+using EvenSo.Client.Test.Model;
 using EvenSo.Client.Test.TestModel;
+using EvenSo.Keys;
 using EvenSo.Logic;
+using EvenSo.Logic.Extensions;
+using EvenSo.Nodes;
+using Microsoft.CodeAnalysis.Text;
+using System.Diagnostics;
+using System.Net;
 
-var t = new UpdateTracker();
 
-var item = new TestRoot();
-//var item = new WikidataItem();
+//var item = new TestRoot();
 
-//item.Labels.Add(new Label { Language = "en", Value = "Adams" });
-//item.Statements.Add(new Statement
-//{
-//    Predicate = new Predicate(),
-//    Subjects = new() 
-//    {
-//        new Item
-//        {
-//          Id = "test id",
-//          Value = "test PK",
-//          Labels = new () { new Label { Language = "en", Value = "Adams" } }
-//        }
-//    }
-//});
+//var n = item.GetNodess().ToArray();
 
-t.Travel2(item);
+//var s = new TestRoot();
 
-//item.List.Add(new ListItem { ListItemId = "10", Ref = true });
-//t.Track(item);
-
-//t.BeforUpdate(item);
-
-//item.List.Add(new ListItem { ListItemId = "20", Ref = true });
-//var p = item.List.First();
-//p.Ref = false;
-
-////item.TestProperty = DateTime.Now;
-////item.List.First().ListItemId = null;
-////item.referencedItem.ReferencedProperty = 10;
-
-//t.DetectChanges(item);
-
-Console.WriteLine("kész");
-
-//test.Start();
-
-//Console.WriteLine("majom");
-
-//test.Wait();
-
-//Console.WriteLine("ok");
-
-//BenchmarkRunner.Run<ReflectionBenchmark>();
-
-//WikidataEntity i = new WikidataItem();
-
-//var type = i.IsIdentifiable();
-
-//var id = i.GetId();
-//var partitionKey = i.GetPartitionKey();
-
-//var p = i.GetProperties()[0].GetValue(i);
+//var g = s.GetNodess().ToArray();
+//var n = s.GetNodess().ToArray();
 
 //_ = 0;
+//var itemChange = item.Track();
 
+BenchmarkRunner.Run<ReflectionBenchmark>();
+
+//item.TestNull = new();
+//item.TestInt = 5;
+//item.TestDateTime = DateTime.Now;
+//item.TestString = "okk";
+//item.TestDecimal = 5.6m;
+//item.TestGuid = Guid.NewGuid();
+
+//if(itemChange.GetChanges(out var changes))
+//{
+//    _ = changes;
+//}
+
+//var cosmosClient = new CosmosClientBuilder("AccountEndpoint=https://wikidatacosmosdb.documents.azure.com:443/;AccountKey=BtXWfCZaJdvk38LqwMT1HpV4GYuAL52QwChnhdOOuD25S4dlyyRNlxaynWbJhgOMtZmopn7OdNAxu5GlN4qlqQ==;")
+//    .WithSerializerOptions(
+//        new CosmosSerializationOptions
+//        {
+//            PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+//        })
+//    .WithBulkExecution(false)
+//    .Build();
 
 //var container = cosmosClient.GetEventContainer("test-database", "test-container");
 

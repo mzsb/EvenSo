@@ -1,72 +1,32 @@
 ﻿using BenchmarkDotNet.Attributes;
 using EvenSo.Client.Test.Model;
-using EvenSo.Logic.Attributes;
 using EvenSo.Logic.Extensions;
-using System.Reflection;
+using EvenSo.Nodes;
 
 namespace EvenSo.Client.Test
 {
+
     [MemoryDiagnoser]
     public class ReflectionBenchmark
     {
-        public readonly PropertyTest _label = new();
+        public readonly PropertyTest1 _item = new();
 
         [Benchmark]
-        public void SimpleLoop()
+        public void SingletonTest2()
         {
-            foreach (var item in _label.GetType().GetProperties())
+            foreach (var item in _item.GetNodess())
             {
-                var value = item.GetValue(_label);
+                var value = item.Value;
             }
-
-            //if (type.GetCustomAttribute<IdentifiableAttribute>(inherit: true) is { } identifiableAttribute)
-            //{
-            //    if (identifiableAttribute is not null)
-            //    {
-            //        object? value = _label;
-            //        foreach (var idPath in identifiableAttribute.Id.Split('/'))
-            //        {
-            //            value = value.GetType().GetProperty(idPath).GetValue(value);
-            //        }
-
-            //        var id = value;
-
-            //        value = _label;
-            //        foreach (var idPath in identifiableAttribute.PartitonKey.Split('/'))
-            //        {
-            //            value = value.GetType().GetProperty(idPath).GetValue(value);
-            //        }
-
-            //        var partitionkey = value;
-            //    }
-            //}
         }
 
         [Benchmark]
-        public void CompiledLoop()
+        public void SingletonTest1()
         {
-            foreach (var item in _label.GetProperties())
+            foreach (var item in _item.GetNodes())
             {
-                var value = item.GetValue(_label);
+                var value = item.Value;
             }
-            //var id = _label.GetId();
-            //var partitionkey = _label.GetPartitionKey();
         }
-
-        //[Benchmark]
-        //public void CompileddLoop()
-        //{
-        //    foreach (var property in _label.GetType().GetCachedProperties())
-        //    {
-        //        foreach (var customAttribute in property.CustomAttributes)
-        //        {
-        //            if (customAttribute.AttributeType == typeof(Referenced))
-        //            {
-        //                var t = customAttribute.ConstructorArguments[0].Value;
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
     }
 }

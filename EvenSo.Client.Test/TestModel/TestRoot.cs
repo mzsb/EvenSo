@@ -1,60 +1,66 @@
-﻿using EvenSo.Logic.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using EvenSo.Keys;
 
 namespace EvenSo.Client.Test.TestModel
 {
-    [Item("ItemId", "Type")]
     public class TestRoot
     {
-        public string ItemId { get; set; } 
+        public string Id { get; set; } = "TestItemId";
 
-        public string Type { get; set; } 
+        public string PartitionKey { get; set; } = "TestItemPK";
 
-        public DateTime TestProperty { get; set; }
+        public object? TestNull { get; set; }
+        public string TestString { get; set; } = "Test";
 
-        public ReferencedItem ReferencedItem { get; set; } = new();
+        public int TestInt { get; set; } = 0;
 
-        public ICollection<ListItem> List { get; set; } = new List<ListItem>();
+        public Guid TestGuid { get; set; } = Guid.NewGuid();
 
+        public DateTime TestDateTime { get; set; } = DateTime.Now;
+
+        public decimal TestDecimal { get; set; } = 0.3m;
+
+        public bool[] TestArray { get; set; } = new[] { true, false };
+
+        public List<int> TestPrimitiveList { get; set; } = new[] { 2, 0, 2, 2 }.ToList();
+
+        public TestChild TestChild { get; set; } = new();
+
+        public TestReferenceChild TestReferenceChild { get; set; } = new();
+
+        public List<TestBaseListItem> TestList { get; set; } = new List<TestBaseListItem>
+        {
+            new TestBaseListItem(),
+            new TestListItem { TestBaseListItemId = "TestListItemId" },
+        };
     }
 
-    [Reference("ListItemId", "PartitionKey")]
-    [ListItem("ListItemId")]
-    public class ListItem
+    public class TestChild
     {
-        public string ListItemId { get; set; } 
-
-        public string PartitionKey { get; set; }
-
-        [Referenced]
-        public bool Ref { get; set; } = false;
+        public string TestChildProperty { get; set; } = "TestChildProperty";
     }
 
-    [Reference("ReferencedItemId", "PartitionKey")]
-    public class ReferencedItem
+    public class TestReferenceChild
     {
-        public string ReferencedItemId { get; set; } = "testId";
+        [Key(KeyType.Id)]
+        public string TestReferencedId { get; set; } = "TestReferenceId";
 
-        public string PartitionKey { get; set; } = "testPK";
-
-        [Referenced]
-        public int? ReferencedProperty { get; set; }
-
-        public REFF MyProperty { get; set; } = new();
+        [Key(KeyType.PartitionKey)]
+        public string TestReferencedPK { get; set; } = "TestReferencePK";
+        public int TestReferencedProperty { get; set; } = 3;
     }
 
-    [Reference("REFFId", "REFFPartitionKey")]
-    public class REFF
+    public class TestBaseListItem
     {
-        public string REFFId { get; set; } = "REFFId";
+        [Key(KeyType.Id)]
+        public string TestBaseListItemId { get; set; } = "TestBaseListItemId";
 
-        public string REFFPartitionKey { get; set; } = "REFFPartitionKey";
+        public string TestBaseListItemProperty { get; set; } = "TestBaseListItemProperty";
+    }
 
-        [Referenced]
-        public List<int> PrimitveList { get; set; } = new List<int> { 1, 2 };
+    public class TestListItem : TestBaseListItem
+    {
+
+        [Key(KeyType.PartitionKey)]
+        public string TestListItemPK { get; set; } = "TestListItemPK";
     }
 }

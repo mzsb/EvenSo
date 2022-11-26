@@ -1,6 +1,5 @@
 ﻿#region Usings
 
-using EvenSo.Logic.Attributes;
 using EvenSo.Logic.Events;
 using EvenSo.Logic.Extensions;
 using System.Linq.Expressions;
