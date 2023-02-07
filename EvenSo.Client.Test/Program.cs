@@ -1,106 +1,34 @@
-﻿
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 using EvenSo.Client.Test;
-using EvenSo.Client.Test.Model;
 using EvenSo.Client.Test.TestModel;
-using EvenSo.Keys;
-using EvenSo.Logic;
-using EvenSo.Logic.Extensions;
-using EvenSo.Nodes;
-using Microsoft.CodeAnalysis.Text;
-using System.Diagnostics;
-using System.Net;
+using EvenSo.PropertyTrees;
 
+#if RELEASE
 
-//var item = new TestRoot();
+BenchmarkRunner.Run<TypeBenchmark>();
 
-//var n = item.GetNodess().ToArray();
+#elif DEBUG
 
-//var s = new TestRoot();
+var Test = new TestRoot();
 
-//var g = s.GetNodess().ToArray();
-//var n = s.GetNodess().ToArray();
+var nodes = new PropertyTree3(Test).Nodes.ToArray();
 
-//_ = 0;
-//var itemChange = item.Track();
+var node = nodes[1];
 
-BenchmarkRunner.Run<ReflectionBenchmark>();
+var i = node.RawValue;
 
-//item.TestNull = new();
-//item.TestInt = 5;
-//item.TestDateTime = DateTime.Now;
-//item.TestString = "okk";
-//item.TestDecimal = 5.6m;
-//item.TestGuid = Guid.NewGuid();
+Test.TestList[0].TestBaseListItemId = "3";
 
-//if(itemChange.GetChanges(out var changes))
-//{
-//    _ = changes;
-//}
+var k = node.NewValue;
 
-//var cosmosClient = new CosmosClientBuilder("AccountEndpoint=https://wikidatacosmosdb.documents.azure.com:443/;AccountKey=BtXWfCZaJdvk38LqwMT1HpV4GYuAL52QwChnhdOOuD25S4dlyyRNlxaynWbJhgOMtZmopn7OdNAxu5GlN4qlqQ==;")
-//    .WithSerializerOptions(
-//        new CosmosSerializationOptions
-//        {
-//            PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
-//        })
-//    .WithBulkExecution(false)
-//    .Build();
+if (node.IsChanged())
+{
 
-//var container = cosmosClient.GetEventContainer("test-database", "test-container");
+    _ = 0;
+}
 
-//WikidataItem wikidataItem = new WikidataItem
-//{
-//    Id = "Q42",
-//    Predicate = new() { Id = "Ok" },
-//    Statements = new ()
-//    {
-//        new ()
-//        {
-//            Predicate = new ()
-//            {
-//                Id = "P31",
-//                Labels = new ()
-//                {
-//                    new ()
-//                    {
-//                        Language = "en", 
-//                        Value = "instace of"
-//                    }
-//                }
-//            },
-//            Subjects = new ()
-//            {
-//                new Item
-//                {
-//                    Id = "Q21",
-//                    Labels = new ()
-//                    {
-//                        new ()
-//                        {
-//                            Language = "en",
-//                            Value = "human"
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//};
+var test = nodes.Where(node => node.IsChanged()).ToArray();
 
-//foreach (var property in wikidataItem.GetType().GetProperties())
-//{
-//    var value = property.GetValue(wikidataItem);
-//    Console.WriteLine(value);
-//}
+_ = 0;
 
-//Console.WriteLine();
-
-
-//foreach (var property in Visitor<WikidataItem>.ChachedProperties)
-//{
-//    var value = property(wikidataItem);
-//    Console.WriteLine(value);
-//}
-
-//_ = 0;
+#endif
