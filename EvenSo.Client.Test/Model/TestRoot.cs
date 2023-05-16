@@ -5,29 +5,38 @@ namespace EvenSo.Client.Test.TestModel
 {
     public class TestRoot
     {
-        [Key(KeyType.Id)]
-        public string Key { get; set; } = "TestItemId";
+        //[Key(KeyType.Id)]
+        //public string Key { get; set; } = "TestItemId";
 
-        [Key(KeyType.PartitionKey)]
-        public string Type { get; set; } = "TestItemPK";
-        public object? TestNull { get; set; }
-        public string TestString { get; set; } = "Test";
+        //[Key(KeyType.PartitionKey)]
+        //public string Type { get; set; } = "TestItemPK";
 
-        public int TestInt { get; set; } = 0;
+        //public object? TestNull { get; set; }
 
-        public Guid TestGuid { get; set; } = Guid.NewGuid();
+        //public string TestString { get; set; } = "Test";
 
-        public DateTime TestDateTime { get; set; } = DateTime.Now;
+        //public int TestInt { get; set; } = 0;
 
-        public decimal TestDecimal { get; set; } = 0.3m;
+        //public bool TestBool { get; set; } = false;
+
+        //public Guid TestGuid { get; set; } = Guid.NewGuid();
+
+        //public DateTime TestDateTime { get; set; } = DateTime.Now;
+
+        //public decimal TestDecimal { get; set; } = 0.3m;
+
+        //public TestChild TestChild { get; set; } = new();
+
+        //public TestReferenceChild TestReferenceChild { get; set; } = new();
 
         public bool[] TestArray { get; set; } = new[] { true, false };
 
         public List<int> TestPrimitiveList { get; set; } = new[] { 2, 0, 2, 2 }.ToList();
 
-        public TestChild TestChild { get; set; } = new();
-
-        public TestReferenceChild TestReferenceChild { get; set; } = new();
+        public Dictionary<int, object?> TestDictionary { get; set; } = new()
+        {
+            [0] = new()
+        };
 
         public List<TestBaseListItem> TestList { get; set; } = new()
         {

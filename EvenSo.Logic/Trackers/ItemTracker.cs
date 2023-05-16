@@ -1,26 +1,55 @@
 ﻿#region Usings
 
+using EvenSo.Caches;
+using EvenSo.Logic.Structures.PropertyTree;
 using EvenSo.PropertyTrees;
+using System.Linq.Expressions;
+using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
+using System.Xml;
 
 #endregion
 
 namespace EvenSo.Trackers
 {
-    public class Tracker
+    public sealed class ItemTracker
     {
+        private readonly ItemTrackerOptions _options = new();
 
-        public Tracker(object item)
+        public ItemTracker WithOptions(Action<ItemTrackerOptions>? options = null)
         {
+            options?.Invoke(_options);
 
-            //var nodes = new PropertyTree(item).Nodes.ToArray();
+            return this;
+        }
 
-            //var f = i.Trees;
 
-            //var t = new PropertyNode(item);
-            //var i = new PropertyNode(item);
+        private ConditionalWeakTable<object, IPropertyTree> Items { get; } = new();
+
+        public void AddOrUpdate(object item)
+        {
+            if (item is null) throw new Exception();
+
+            Items.AddOrUpdate(item, _options.ToTree(item));
+        }
+
+        public void Check(object item)
+        {
+            if (item is null) throw new Exception();
+
+            Items.TryGetValue(item, out var propertyTree);
+
+            var i = propertyTree?.ChangedNodes.ToArray();
+
+
 
             _ = 0;
         }
+    }
+
+    public sealed class ItemTrackerOptions
+    {
+        public Func<object, IPropertyTree> ToTree { get; set; } = item => new PropertyTree(item);
     }
 }
 //    public static class ItemChanges

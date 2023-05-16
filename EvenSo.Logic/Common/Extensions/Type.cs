@@ -45,7 +45,7 @@ namespace EvenSo
             item.GetType().IsNotEnumerable();
 
         public static Type? GetEnumerableType(this Type type) =>
-            type.GetGenericArguments().FirstOrDefault() ?? type.GetElementType();
+            type.GetGenericArguments().LastOrDefault() ?? type.GetElementType();
 
         public static Type? GetEnumerableType(this object item) =>
             item.GetType().GetGenericArguments().FirstOrDefault() ?? item.GetType().GetElementType();

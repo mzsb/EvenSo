@@ -1,7 +1,15 @@
 ﻿using BenchmarkDotNet.Running;
+using EvenSo;
+using EvenSo.Caches;
 using EvenSo.Client.Test;
 using EvenSo.Client.Test.TestModel;
+using EvenSo.Logic.Structures.PropertyTree;
 using EvenSo.PropertyTrees;
+using EvenSo.Trackers;
+using System;
+using System.Collections;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 #if RELEASE
 
@@ -9,26 +17,50 @@ BenchmarkRunner.Run<TypeBenchmark>();
 
 #elif DEBUG
 
-var Test = new TestRoot();
+var test = new TestRoot();
 
-var nodes = new PropertyTree3(Test).Nodes.ToArray();
+var tracker = new ItemTracker();
 
-var node = nodes[1];
+tracker.AddOrUpdate(test);
 
-var i = node.RawValue;
+//test.TestDictionary.Add(1,"1");
 
-Test.TestList[0].TestBaseListItemId = "3";
+//test.Key = "TestItemId2";
 
-var k = node.NewValue;
+//test.Type = "TestItemPK2";
 
-if (node.IsChanged())
-{
+//test.TestNull = new object();
 
-    _ = 0;
-}
+//test.TestString = "Test";
 
-var test = nodes.Where(node => node.IsChanged()).ToArray();
+//test.TestInt = 1;
+
+//test.TestBool = true;
+
+//test.TestGuid = Guid.NewGuid();
+
+//test.TestDateTime = DateTime.Now;
+
+//test.TestDecimal = 0.2m;
+
+//test.TestArray = new[] { false };
+
+//test.TestPrimitiveList[1] = 1;
+
+test.TestList.RemoveAt(0);
+
+//test.TestChild = new();
+
+//test.TestReferenceChild = new();
+
+tracker.Check(test);
+
 
 _ = 0;
 
 #endif
+
+
+
+
+

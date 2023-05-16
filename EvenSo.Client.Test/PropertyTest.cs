@@ -491,23 +491,8 @@ namespace EvenSo.Client.Test
 
     public class PropertyTest6
     {
-        public PropertyTestt0 MyProperty0 { get; set; } = new();
-        public PropertyTestt1 MyProperty1 { get; set; } = new();
-        public PropertyTestt2 MyProperty2 { get; set; } = new();
-        public PropertyTestt3 MyProperty3 { get; set; } = new();
-        public PropertyTestt4 MyProperty4 { get; set; } = new();
-        public PropertyTestt5 MyProperty5 { get; set; } = new();
-        public PropertyTestt6 MyProperty6 { get; set; } = new();
-        public PropertyTestt7 MyProperty7 { get; set; } = new();
-        public PropertyTestt8 MyProperty8 { get; set; } = new();
-        public PropertyTestt9 MyProperty9 { get; set; } = new();
-        public PropertyTestt10 MyProperty10 { get; set; } = new();
-        public PropertyTestt11 MyProperty11 { get; set; } = new();
-        public PropertyTestt12 MyProperty12 { get; set; } = new();
-        public PropertyTestt13 MyProperty13 { get; set; } = new();
-
-        public PropertyTestt14 MyProperty14 { get; set; } = new();
-        public PropertyTestt15 MyProperty15 { get; set; } = new();
+        public List<PropertyTestt0> MyProperty0 { get; set; } =
+             Enumerable.Range(0, 10).Select(_ => new PropertyTestt0()).ToList();
 
         public List<PropertyTestt16> MyProperty16 { get; set; } = 
             Enumerable.Range(0, 10).Select(_ => new PropertyTestt16()).ToList();
@@ -562,6 +547,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt1 PropertyTest1 { get; set; } = new();
     }
 
     public class PropertyTestt1
@@ -571,7 +558,10 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt2 PropertyTest2 { get; set; } = new();
     }
+
 
     public class PropertyTestt2
     {
@@ -580,6 +570,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt3 PropertyTest3 { get; set; } = new();
     }
 
     public class PropertyTestt3
@@ -589,6 +581,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt4 PropertyTest4 { get; set; } = new();
     }
 
     public class PropertyTestt4
@@ -598,6 +592,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt5 PropertyTest5 { get; set; } = new();
     }
 
     public class PropertyTestt5
@@ -607,6 +603,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt6 PropertyTest6 { get; set; } = new();
     }
 
     public class PropertyTestt6
@@ -616,6 +614,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt7 PropertyTest7 { get; set; } = new();
     }
 
     public class PropertyTestt7
@@ -625,6 +625,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt8 PropertyTest8 { get; set; } = new();
     }
 
     public class PropertyTestt8
@@ -634,6 +636,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt9 PropertyTest9 { get; set; } = new();
     }
 
     public class PropertyTestt9
@@ -643,6 +647,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt10 PropertyTest10 { get; set; } = new();
     }
 
     public class PropertyTestt10
@@ -652,6 +658,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt11 PropertyTest11 { get; set; } = new();
     }
 
     public class PropertyTestt11
@@ -661,6 +669,7 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+        public PropertyTestt12 PropertyTest12 { get; set; } = new();
     }
 
     public class PropertyTestt12
@@ -670,6 +679,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt13 PropertyTest13 { get; set; } = new();
     }
 
     public class PropertyTestt13
@@ -679,6 +690,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt14 PropertyTest14 { get; set; } = new();
     }
 
     public class PropertyTestt14
@@ -688,6 +701,8 @@ namespace EvenSo.Client.Test
 
         [Key(KeyType.PartitionKey)]
         public string Type { get; set; } = "TestItemPK";
+
+        public PropertyTestt15 PropertyTest15 { get; set; } = new();
     }
 
     public class PropertyTestt15
