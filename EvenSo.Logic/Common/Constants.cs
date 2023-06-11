@@ -1,10 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿#region Usings
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Numerics;
 
-namespace EvenSo
+#endregion
+
+namespace EvenSo.Logic
 {
-    public static class Constants
+    internal static class Constants
     {
         #region Event
 
@@ -27,7 +31,7 @@ namespace EvenSo
 
         #region Type
 
-        public static readonly Type[] PrimitiveLikeTypes =
+        internal static readonly Type[] PrimitiveLikeTypes =
         {
             typeof(decimal),
             typeof(string),
@@ -40,7 +44,5 @@ namespace EvenSo
         };
 
         #endregion
-
-
     }
 }

@@ -1,15 +1,15 @@
-﻿using BenchmarkDotNet.Running;
-using EvenSo;
-using EvenSo.Caches;
-using EvenSo.Client.Test;
+﻿#region Usings
+
 using EvenSo.Client.Test.TestModel;
-using EvenSo.Logic.Structures.PropertyTree;
-using EvenSo.PropertyTrees;
-using EvenSo.Trackers;
-using System;
-using System.Collections;
-using System.Reflection;
-using System.Runtime.CompilerServices;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using EvenSo.Logic.Configuration;
+using Microsoft.Azure.Cosmos;
+using EvenSo.Logic.Services;
+using Microsoft.Azure.Cosmos.Fluent;
+using Newtonsoft.Json.Linq;
+
+#endregion
 
 #if RELEASE
 
@@ -17,50 +17,42 @@ BenchmarkRunner.Run<TypeBenchmark>();
 
 #elif DEBUG
 
-var test = new TestRoot();
+var accountEndpoint = string.Empty;
+var authKey = string.Empty;
 
-var tracker = new ItemTracker();
+var cosmosClient = new CosmosClientBuilder(accountEndpoint, authKey)
+    .WithSerializerOptions(new CosmosSerializationOptions 
+    {
+        PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase 
+    })
+    .Build();
 
-tracker.AddOrUpdate(test);
+var container = cosmosClient.GetDatabase("test-database").GetContainer("test-container");
 
-//test.TestDictionary.Add(1,"1");
+using (var serviceScope = Host
+    .CreateDefaultBuilder(args)
+    .ConfigureEvenSo(eventContainer: container)
+    .Build().Services
+    .CreateScope())
+{
+    if (serviceScope.ServiceProvider.GetService<IEventService>() is 
+        IEventService eventService)
+    {
+        var test = new TestRoot();
 
-//test.Key = "TestItemId2";
+        await container.CreateItemEventAsync(test);
 
-//test.Type = "TestItemPK2";
+        container.Track(test);
 
-//test.TestNull = new object();
+        test.TestString = "Test2";
 
-//test.TestString = "Test";
+        await container.UpdateItemEventAsync(test);
 
-//test.TestInt = 1;
-
-//test.TestBool = true;
-
-//test.TestGuid = Guid.NewGuid();
-
-//test.TestDateTime = DateTime.Now;
-
-//test.TestDecimal = 0.2m;
-
-//test.TestArray = new[] { false };
-
-//test.TestPrimitiveList[1] = 1;
-
-test.TestList.RemoveAt(0);
-
-//test.TestChild = new();
-
-//test.TestReferenceChild = new();
-
-tracker.Check(test);
-
-
-_ = 0;
+        await container.DeleteItemEventAsync(test);
+    }
+}
 
 #endif
-
-
 
 
 

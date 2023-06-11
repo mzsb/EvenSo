@@ -1,68 +1,89 @@
-﻿using EvenSo.Caches;
-
+﻿using EvenSo.Logic.Attributes;
+using EvenSo.Logic.Attributes.Reference;
 
 namespace EvenSo.Client.Test.TestModel
 {
     public class TestRoot
     {
-        //[Key(KeyType.Id)]
-        //public string Key { get; set; } = "TestItemId";
+        [Id]
+        public string Key { get; set; } = "TestItemId";
 
-        //[Key(KeyType.PartitionKey)]
-        //public string Type { get; set; } = "TestItemPK";
+        [PartitionKey]
+        public string TestRootPartitionKey { get; set; } = "TestItemPK";
 
-        //public object? TestNull { get; set; }
+        public object? TestNull { get; set; }
 
-        //public string TestString { get; set; } = "Test";
+        public string TestString { get; set; } = "Test1";
 
-        //public int TestInt { get; set; } = 0;
+        public int TestInt { get; set; } = 0;
 
-        //public bool TestBool { get; set; } = false;
+        public bool TestBool { get; set; } = false;
 
-        //public Guid TestGuid { get; set; } = Guid.NewGuid();
+        public Guid TestGuid { get; set; } = Guid.NewGuid();
 
-        //public DateTime TestDateTime { get; set; } = DateTime.Now;
+        public DateTime TestDateTime { get; set; } = DateTime.Now;
 
-        //public decimal TestDecimal { get; set; } = 0.3m;
+        public decimal TestDecimal { get; set; } = 0.3m;
 
-        //public TestChild TestChild { get; set; } = new();
+        public TestChild TestChild { get; set; } = new();
 
-        //public TestReferenceChild TestReferenceChild { get; set; } = new();
+        public TestReferenceChild TestReferenceChild { get; set; } = new();
+
+        public TestReferenceChild TestReferenceChild2 { get; set; } = new();
 
         public bool[] TestArray { get; set; } = new[] { true, false };
 
-        public List<int> TestPrimitiveList { get; set; } = new[] { 2, 0, 2, 2 }.ToList();
+        public List<string?> TestPrimitiveList { get; set; } = new[] { null, "test1" }.ToList();
 
         public Dictionary<int, object?> TestDictionary { get; set; } = new()
         {
             [0] = new()
         };
 
-        public List<TestBaseListItem> TestList { get; set; } = new()
+        public List<TestBaseListItem?> TestList { get; set; } = new()
         {
-            new TestBaseListItem(),
-            new TestListItem { TestBaseListItemId = "TestListItemId" },
+            new TestListItem { TestBaseListItemId = "1" },
+            new TestListItem { TestBaseListItemId = "2" }
         };
     }
 
     public class TestChild
     {
+        [Id]
+        public string TestChildId { get; set; } = "TestChildId";
+
+        public string TestChildPK { get; set; } = "TestChildPK";
+
+        [Reference(of: typeof(TestReferenceChild))]
         public string TestChildProperty { get; set; } = "TestChildProperty";
     }
 
     public class TestReferenceChild
     {
-        [Key(KeyType.Id)]
-        public string TestReferencedId { get; set; } = "TestReferenceId";
+        [Id]
+        public string TestReferenceChildId { get; set; } = "TestReferenceId";
 
-        [Key(KeyType.PartitionKey)]
-        public string TestReferencedPK { get; set; } = "TestReferencePK";
-        //public int TestReferencedProperty { get; set; } = 3;
+        [PartitionKey]
+        public string TestReferenceChildPK { get; set; } = "TestReferencePK";
+
+        public string TestReferenceChildProperty { get; set; } = "TestReferenceChildProperty";
+
+        public List<TestChild> TestReferenceChildList { get; set; } = new()
+        {
+            new TestChild
+            {
+                TestChildId = "TestChildId1"
+            },
+              new TestChild
+            {
+                TestChildId = "TestChildId2"
+            },
+        };
     }
 
     public class TestBaseListItem
     {
-        [Key(KeyType.Id)]
+        [Id]
         public string TestBaseListItemId { get; set; } = "TestBaseListItemId";
 
         public string TestBaseListItemProperty { get; set; } = "TestBaseListItemProperty";
@@ -70,8 +91,9 @@ namespace EvenSo.Client.Test.TestModel
 
     public class TestListItem : TestBaseListItem
     {
-
-        [Key(KeyType.PartitionKey)]
+        [PartitionKey]
         public string TestListItemPK { get; set; } = "TestListItemPK";
+
+        public TestChild TestChild { get; set; } = new();
     }
 }
